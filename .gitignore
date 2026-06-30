@@ -1,0 +1,8 @@
+bin/
+obj/
+.claude/
+*.bak
+*.bak_*
+*.user
+desktop.ini
+Thumbs.db

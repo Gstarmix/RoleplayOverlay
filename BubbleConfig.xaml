@@ -1,0 +1,289 @@
+
+
+<UserControl x:Class="RoleplayOverlay.BubbleConfigControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <UserControl.Resources>
+    <SolidColorBrush x:Key="Bg2"    Color="#141416"/>
+    <SolidColorBrush x:Key="Bg3"    Color="#1C1D20"/>
+    <SolidColorBrush x:Key="Line"   Color="#2A2B2E"/>
+    <SolidColorBrush x:Key="Fg"     Color="#EAEAEA"/>
+    <SolidColorBrush x:Key="Fg2"    Color="#9A9A9A"/>
+    <SolidColorBrush x:Key="Accent" Color="#E84118"/>
+
+    <Style x:Key="AnchorBtn" TargetType="Button">
+      <Setter Property="Width" Value="16"/>
+      <Setter Property="Height" Value="16"/>
+      <Setter Property="Margin" Value="1"/>
+      <Setter Property="Background" Value="#333333"/>
+      <Setter Property="BorderBrush" Value="#555555"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="2"/>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </UserControl.Resources>
+
+  <StackPanel>
+
+    <DockPanel Margin="0,0,0,8">
+      <TextBlock Text="CONFIGURATION BULLES" FontSize="10" FontWeight="SemiBold"
+                 Foreground="{StaticResource Fg2}" VerticalAlignment="Center"/>
+      <Button DockPanel.Dock="Right" Content="Appliquer à l'overlay"
+              FontSize="10" Padding="6,3"
+              Background="{StaticResource Bg3}"
+              Foreground="{StaticResource Fg}"
+              BorderBrush="{StaticResource Line}" BorderThickness="1"
+              Cursor="Hand"
+              x:Name="ApplyToOverlayBtn"
+              Click="OnApplyToOverlay"/>
+    </DockPanel>
+
+    <Border Background="#0D0D0F" CornerRadius="6"
+            BorderBrush="{StaticResource Line}" BorderThickness="1"
+            Margin="0,0,0,10"
+            ClipToBounds="True"
+            HorizontalAlignment="Left">
+      <Canvas x:Name="BubbleCanvas"
+              Width="234" Height="131"
+              Background="Transparent"
+              MouseMove="OnCanvasMouseMove"
+              MouseLeftButtonUp="OnCanvasMouseUp"
+              MouseLeave="OnCanvasMouseLeave">
+
+        <Rectangle Width="234" Height="131" Fill="#06FFFFFF"/>
+
+        <TextBlock Canvas.Right="4" Canvas.Bottom="2"
+                   Text="1920×1080" FontSize="7"
+                   Foreground="#30FFFFFF"/>
+
+        <Grid x:Name="BubbleYou"
+              Canvas.Left="106" Canvas.Top="103"
+              Width="24" Height="24"
+              Cursor="SizeAll"
+              MouseLeftButtonDown="OnBubbleMouseDown"
+              Tag="you">
+          <Ellipse x:Name="YouGlowEllipse"
+                   Fill="#80FFD400" Margin="-5"
+                   Effect="{x:Null}"/>
+          <Ellipse Fill="#FFD400" Stroke="White" StrokeThickness="2"/>
+          <TextBlock Text="Y" FontSize="8" FontWeight="Bold"
+                     Foreground="Black"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"/>
+        </Grid>
+
+        <Grid x:Name="BubbleBot1"
+              Canvas.Left="4" Canvas.Top="4"
+              Width="24" Height="24"
+              Cursor="SizeAll"
+              MouseLeftButtonDown="OnBubbleMouseDown"
+              Tag="bot1">
+          <Ellipse x:Name="Bot1GlowEllipse"
+                   Fill="#80FF00FF" Margin="-5"/>
+          <Ellipse Fill="#FF00FF" Stroke="White" StrokeThickness="2"/>
+          <TextBlock Text="B1" FontSize="7" FontWeight="Bold"
+                     Foreground="White"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"/>
+        </Grid>
+
+        <Grid x:Name="BubbleBot2"
+              Canvas.Left="200" Canvas.Top="4"
+              Width="24" Height="24"
+              Cursor="SizeAll"
+              MouseLeftButtonDown="OnBubbleMouseDown"
+              Tag="bot2">
+          <Ellipse x:Name="Bot2GlowEllipse"
+                   Fill="#8000FFFF" Margin="-5"/>
+          <Ellipse Fill="#00FFFF" Stroke="White" StrokeThickness="2"/>
+          <TextBlock Text="B2" FontSize="7" FontWeight="Bold"
+                     Foreground="Black"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"/>
+        </Grid>
+
+      </Canvas>
+    </Border>
+
+    <TextBlock Text="⟵ Glisser les bulles pour les repositionner"
+               FontSize="9" Foreground="{StaticResource Fg2}"
+               Margin="0,0,0,10" TextWrapping="Wrap"/>
+
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+        <ColumnDefinition Width="8"/>
+        <ColumnDefinition/>
+        <ColumnDefinition Width="8"/>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+
+      <StackPanel Grid.Column="0">
+        <Border CornerRadius="4" Padding="6,4"
+                Background="#18FF00FF" Margin="0,0,0,4">
+          <TextBlock Text="BOT 1" FontSize="9" FontWeight="Bold"
+                     Foreground="#FF00FF" HorizontalAlignment="Center"/>
+        </Border>
+        <TextBlock Text="Couleur halo" FontSize="9"
+                   Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+        <Button x:Name="Bot1ColorBtn"
+                Height="22" Background="#FFFF00FF"
+                BorderBrush="White" BorderThickness="1"
+                Cursor="Hand" Click="OnPickBot1Color"
+                ToolTip="Changer la couleur du halo"/>
+        <TextBlock Text="Ancrage" FontSize="9"
+                   Foreground="{StaticResource Fg2}" Margin="0,6,0,2"/>
+        <Grid x:Name="Bot1AnchorGrid" Width="54" Height="54"
+              HorizontalAlignment="Left" Margin="0,0,0,4">
+          <Grid.RowDefinitions>
+            <RowDefinition/><RowDefinition/><RowDefinition/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+          <Button Grid.Row="0" Grid.Column="0" Tag="top-left"      Click="OnBot1AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="0" Grid.Column="1" Tag="top-center"    Click="OnBot1AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="0" Grid.Column="2" Tag="top-right"     Click="OnBot1AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="1" Grid.Column="0" Tag="middle-left"   Click="OnBot1AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="1" Grid.Column="1" Tag="center"        Click="OnBot1AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="1" Grid.Column="2" Tag="middle-right"  Click="OnBot1AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="2" Grid.Column="0" Tag="bottom-left"   Click="OnBot1AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="2" Grid.Column="1" Tag="bottom-center" Click="OnBot1AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="2" Grid.Column="2" Tag="bottom-right"  Click="OnBot1AnchorClick" Style="{StaticResource AnchorBtn}"/>
+        </Grid>
+        <TextBlock Text="X  Y" FontSize="9"
+                   Foreground="{StaticResource Fg2}" Margin="0,2,0,2"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/><ColumnDefinition Width="4"/><ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+          <TextBox x:Name="Bot1XBox" Grid.Column="0" Text="20"
+                   FontSize="9" Padding="3,2"
+                   TextChanged="OnPositionChanged" Tag="Bot1X"/>
+          <TextBox x:Name="Bot1YBox" Grid.Column="2" Text="20"
+                   FontSize="9" Padding="3,2"
+                   TextChanged="OnPositionChanged" Tag="Bot1Y"/>
+        </Grid>
+      </StackPanel>
+
+      <StackPanel Grid.Column="2">
+        <Border CornerRadius="4" Padding="6,4"
+                Background="#1800FFFF" Margin="0,0,0,4">
+          <TextBlock Text="BOT 2" FontSize="9" FontWeight="Bold"
+                     Foreground="#00FFFF" HorizontalAlignment="Center"/>
+        </Border>
+        <TextBlock Text="Couleur halo" FontSize="9"
+                   Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+        <Button x:Name="Bot2ColorBtn"
+                Height="22" Background="#FF00FFFF"
+                BorderBrush="White" BorderThickness="1"
+                Cursor="Hand" Click="OnPickBot2Color"
+                ToolTip="Changer la couleur du halo"/>
+        <TextBlock Text="Ancrage" FontSize="9"
+                   Foreground="{StaticResource Fg2}" Margin="0,6,0,2"/>
+        <Grid x:Name="Bot2AnchorGrid" Width="54" Height="54"
+              HorizontalAlignment="Left" Margin="0,0,0,4">
+          <Grid.RowDefinitions>
+            <RowDefinition/><RowDefinition/><RowDefinition/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+          <Button Grid.Row="0" Grid.Column="0" Tag="top-left"      Click="OnBot2AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="0" Grid.Column="1" Tag="top-center"    Click="OnBot2AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="0" Grid.Column="2" Tag="top-right"     Click="OnBot2AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="1" Grid.Column="0" Tag="middle-left"   Click="OnBot2AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="1" Grid.Column="1" Tag="center"        Click="OnBot2AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="1" Grid.Column="2" Tag="middle-right"  Click="OnBot2AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="2" Grid.Column="0" Tag="bottom-left"   Click="OnBot2AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="2" Grid.Column="1" Tag="bottom-center" Click="OnBot2AnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="2" Grid.Column="2" Tag="bottom-right"  Click="OnBot2AnchorClick" Style="{StaticResource AnchorBtn}"/>
+        </Grid>
+        <TextBlock Text="X  Y" FontSize="9"
+                   Foreground="{StaticResource Fg2}" Margin="0,2,0,2"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/><ColumnDefinition Width="4"/><ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+          <TextBox x:Name="Bot2XBox" Grid.Column="0" Text="1700"
+                   FontSize="9" Padding="3,2"
+                   TextChanged="OnPositionChanged" Tag="Bot2X"/>
+          <TextBox x:Name="Bot2YBox" Grid.Column="2" Text="20"
+                   FontSize="9" Padding="3,2"
+                   TextChanged="OnPositionChanged" Tag="Bot2Y"/>
+        </Grid>
+      </StackPanel>
+
+      <StackPanel Grid.Column="4">
+        <Border CornerRadius="4" Padding="6,4"
+                Background="#18FFD400" Margin="0,0,0,4">
+          <TextBlock Text="YOU" FontSize="9" FontWeight="Bold"
+                     Foreground="#FFD400" HorizontalAlignment="Center"/>
+        </Border>
+        <TextBlock Text="Couleur halo" FontSize="9"
+                   Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+        <Button x:Name="YouColorBtn"
+                Height="22" Background="#FFFFD400"
+                BorderBrush="White" BorderThickness="1"
+                Cursor="Hand" Click="OnPickYouColor"
+                ToolTip="Changer la couleur du halo"/>
+        <TextBlock Text="Ancrage" FontSize="9"
+                   Foreground="{StaticResource Fg2}" Margin="0,6,0,2"/>
+        <Grid x:Name="YouAnchorGrid" Width="54" Height="54"
+              HorizontalAlignment="Left" Margin="0,0,0,4">
+          <Grid.RowDefinitions>
+            <RowDefinition/><RowDefinition/><RowDefinition/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+          <Button Grid.Row="0" Grid.Column="0" Tag="top-left"      Click="OnYouAnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="0" Grid.Column="1" Tag="top-center"    Click="OnYouAnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="0" Grid.Column="2" Tag="top-right"     Click="OnYouAnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="1" Grid.Column="0" Tag="middle-left"   Click="OnYouAnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="1" Grid.Column="1" Tag="center"        Click="OnYouAnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="1" Grid.Column="2" Tag="middle-right"  Click="OnYouAnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="2" Grid.Column="0" Tag="bottom-left"   Click="OnYouAnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="2" Grid.Column="1" Tag="bottom-center" Click="OnYouAnchorClick" Style="{StaticResource AnchorBtn}"/>
+          <Button Grid.Row="2" Grid.Column="2" Tag="bottom-right"  Click="OnYouAnchorClick" Style="{StaticResource AnchorBtn}"/>
+        </Grid>
+        <TextBlock Text="X  Y" FontSize="9"
+                   Foreground="{StaticResource Fg2}" Margin="0,2,0,2"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/><ColumnDefinition Width="4"/><ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+          <TextBox x:Name="YouXBox" Grid.Column="0" Text="890"
+                   FontSize="9" Padding="3,2"
+                   TextChanged="OnPositionChanged" Tag="YouX"/>
+          <TextBox x:Name="YouYBox" Grid.Column="2" Text="920"
+                   FontSize="9" Padding="3,2"
+                   TextChanged="OnPositionChanged" Tag="YouY"/>
+        </Grid>
+      </StackPanel>
+
+    </Grid>
+
+    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+      <TextBlock Text="Taille avatar :"
+                 Foreground="{StaticResource Fg2}" FontSize="10"
+                 VerticalAlignment="Center" Margin="0,0,8,0"/>
+      <TextBox x:Name="AvatarSizeBox" Text="140" Width="50"
+               FontSize="11" Padding="4,2"
+               ToolTip="Taille en pixels de l'avatar dans la vidéo (recommandé: 100-180)"/>
+      <TextBlock Text="px" Foreground="{StaticResource Fg2}"
+                 FontSize="10" VerticalAlignment="Center" Margin="4,0,0,0"/>
+    </StackPanel>
+
+  </StackPanel>
+</UserControl>
