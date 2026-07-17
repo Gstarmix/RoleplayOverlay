@@ -1,0 +1,1146 @@
+﻿<Window x:Class="RoleplayOverlay.EditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:RoleplayOverlay"
+        Title="RoleplayOverlay — Studio" Height="780" MinHeight="560"
+        Width="1200" MinWidth="820" ResizeMode="CanResize"
+        WindowStartupLocation="CenterScreen"
+        Icon="pack://application:,,,/Assets/scene.ico" Background="#0B0B0C">
+  <Window.Resources>
+    <SolidColorBrush x:Key="Bg" Color="#0B0B0C"/><SolidColorBrush x:Key="Bg2" Color="#141416"/>
+    <SolidColorBrush x:Key="Bg3" Color="#1C1D20"/><SolidColorBrush x:Key="Line" Color="#2A2B2E"/>
+    <SolidColorBrush x:Key="Fg" Color="#EAEAEA"/><SolidColorBrush x:Key="Fg2" Color="#9A9A9A"/>
+    <SolidColorBrush x:Key="Accent" Color="#E84118"/><SolidColorBrush x:Key="AccentDim" Color="#7C1A0E"/>
+    <SolidColorBrush x:Key="YouColor" Color="#FFD400"/><SolidColorBrush x:Key="Bot1Color" Color="#FF00FF"/>
+    <SolidColorBrush x:Key="Bot2Color" Color="#00FFFF"/>
+    <SolidColorBrush x:Key="LangEN" Color="#4DC93C"/><SolidColorBrush x:Key="LangFR" Color="#4D9BC9"/>
+    <Style x:Key="DarkButton" TargetType="Button">
+      <Setter Property="Foreground" Value="{StaticResource Fg}"/><Setter Property="Background" Value="{StaticResource Bg3}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource Line}"/><Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="12,6"/><Setter Property="Cursor" Value="Hand"/><Setter Property="SnapsToDevicePixels" Value="True"/>
+      <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+          <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+        <ControlTemplate.Triggers>
+          <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#252628"/></Trigger>
+          <Trigger Property="IsPressed" Value="True"><Setter Property="Background" Value="#2C2D30"/></Trigger>
+          <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.4"/></Trigger>
+        </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+    <Style x:Key="AccentButton" TargetType="Button" BasedOn="{StaticResource DarkButton}">
+      <Setter Property="Background" Value="{StaticResource Accent}"/><Setter Property="BorderBrush" Value="{StaticResource AccentDim}"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#FF5733"/></Trigger>
+        <Trigger Property="IsPressed" Value="True"><Setter Property="Background" Value="#C0391B"/></Trigger></Style.Triggers></Style>
+    <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource DarkButton}">
+      <Setter Property="Padding" Value="8,4"/><Setter Property="FontSize" Value="13"/><Setter Property="MinWidth" Value="30"/></Style>
+    <Style TargetType="TextBox">
+      <Setter Property="Foreground" Value="{StaticResource Fg}"/><Setter Property="Background" Value="#111113"/>
+      <Setter Property="BorderBrush" Value="{StaticResource Line}"/><Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="8,5"/><Setter Property="CaretBrush" Value="{StaticResource Fg}"/>
+      <Setter Property="SelectionBrush" Value="{StaticResource Accent}"/><Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+      <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox">
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
+          <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"/></Border>
+      </ControlTemplate></Setter.Value></Setter></Style>
+    <Style TargetType="ComboBox">
+      <Setter Property="Foreground" Value="{StaticResource Fg}"/><Setter Property="Background" Value="#111113"/>
+      <Setter Property="BorderBrush" Value="{StaticResource Line}"/><Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="8,4"/><Setter Property="HorizontalContentAlignment" Value="Left"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBox"><Grid>
+        <Border x:Name="Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5"><Grid>
+          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="20"/></Grid.ColumnDefinitions>
+          <ContentPresenter Grid.Column="0" Margin="8,4,0,4" Content="{TemplateBinding SelectionBoxItem}"
+            ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" VerticalAlignment="Center" TextElement.Foreground="{StaticResource Fg}"/>
+          <TextBlock Grid.Column="1" Text="▾" Foreground="{StaticResource Fg2}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10"/>
+          <ToggleButton Grid.Column="0" Grid.ColumnSpan="2" Focusable="False"
+            IsChecked="{Binding IsDropDownOpen,RelativeSource={RelativeSource TemplatedParent},Mode=TwoWay}">
+            <ToggleButton.Style><Style TargetType="ToggleButton"><Setter Property="Background" Value="Transparent"/>
+              <Setter Property="BorderThickness" Value="0"/><Setter Property="Template"><Setter.Value>
+              <ControlTemplate TargetType="ToggleButton"><Border Background="Transparent"/></ControlTemplate>
+            </Setter.Value></Setter></Style></ToggleButton.Style></ToggleButton></Grid></Border>
+        <Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False"
+               PopupAnimation="Slide" Placement="Bottom">
+          <Border Background="#1C1D20" BorderBrush="{StaticResource Line}" BorderThickness="1"
+                  MaxHeight="{TemplateBinding MaxDropDownHeight}"><ScrollViewer><ItemsPresenter/></ScrollViewer></Border>
+        </Popup></Grid></ControlTemplate></Setter.Value></Setter></Style>
+    <Style TargetType="ComboBoxItem">
+      <Setter Property="Foreground" Value="{StaticResource Fg}"/><Setter Property="Background" Value="#141416"/>
+      <Setter Property="Padding" Value="10,6"/><Setter Property="FontSize" Value="12"/><Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBoxItem">
+        <Border x:Name="Bd" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+          <ContentPresenter VerticalAlignment="Center"/></Border>
+        <ControlTemplate.Triggers>
+          <Trigger Property="IsHighlighted" Value="True"><Setter TargetName="Bd" Property="Background" Value="#14FFFFFF"/>
+            <Setter TargetName="Bd" Property="BorderThickness" Value="2,0,0,0"/><Setter TargetName="Bd" Property="BorderBrush" Value="#60E84118"/></Trigger>
+          <Trigger Property="IsSelected" Value="True"><Setter TargetName="Bd" Property="Background" Value="#1AE84118"/>
+            <Setter TargetName="Bd" Property="BorderThickness" Value="2,0,0,0"/><Setter TargetName="Bd" Property="BorderBrush" Value="#E84118"/>
+            <Setter Property="Foreground" Value="White"/></Trigger>
+        </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+    <Style TargetType="CheckBox"><Setter Property="Foreground" Value="{StaticResource Fg2}"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/></Style>
+    <Style x:Key="SectionLabel" TargetType="TextBlock"><Setter Property="Foreground" Value="{StaticResource Fg2}"/>
+      <Setter Property="FontSize" Value="10"/><Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Margin" Value="0,0,0,6"/><Setter Property="Text" Value="SECTION"/></Style>
+    <Style TargetType="DataGrid"><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="{StaticResource Fg}"/>
+      <Setter Property="BorderThickness" Value="0"/><Setter Property="GridLinesVisibility" Value="Horizontal"/>
+      <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource Line}"/><Setter Property="RowBackground" Value="Transparent"/>
+      <Setter Property="AlternatingRowBackground" Value="Transparent"/><Setter Property="ColumnHeaderHeight" Value="32"/></Style>
+    <Style TargetType="DataGridColumnHeader"><Setter Property="Background" Value="{StaticResource Bg2}"/>
+      <Setter Property="Foreground" Value="{StaticResource Fg2}"/><Setter Property="FontSize" Value="10"/>
+      <Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Padding" Value="8,0"/>
+      <Setter Property="BorderBrush" Value="{StaticResource Line}"/><Setter Property="BorderThickness" Value="0,0,1,1"/></Style>
+    <Style TargetType="DataGridRow">
+
+      <Setter Property="Background" Value="{Binding Speaker, Converter={x:Static local:SpeakerToBrushConverter.Instance}}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#14FFFFFF"/></Trigger>
+        <Trigger Property="IsSelected" Value="True">
+          <Setter Property="Background" Value="#88E84118"/>
+          <Setter Property="BorderBrush" Value="#E84118"/>
+          <Setter Property="BorderThickness" Value="3,0,0,0"/>
+        </Trigger>
+      </Style.Triggers></Style>
+    <Style TargetType="DataGridCell"><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="6,0"/><Setter Property="Foreground" Value="{StaticResource Fg}"/>
+      <Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#88E84118"/><Setter Property="Foreground" Value="{StaticResource Fg}"/></Trigger></Style.Triggers></Style>
+    <Style x:Key="VSep" TargetType="Border"><Setter Property="Width" Value="1"/><Setter Property="Background" Value="{StaticResource Line}"/></Style>
+  </Window.Resources>
+  <Grid>
+    <Grid.RowDefinitions><RowDefinition Height="48"/><RowDefinition Height="1"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+    <Border Grid.Row="0" Background="{StaticResource Bg2}"><DockPanel LastChildFill="False" Margin="12,0">
+      <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+        <TextBlock Text="🎬" FontSize="18" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Text="STUDIO" FontSize="11" FontWeight="Bold" Foreground="{StaticResource Fg}" VerticalAlignment="Center"/>
+        <Border Width="1" Background="{StaticResource Line}" Margin="14,8"/>
+        <TextBox x:Name="PathBox" Width="340" Margin="0,0,8,0" VerticalAlignment="Center" ToolTip="Chemin .json"/>
+        <Button Content="📂 Ouvrir" Style="{StaticResource DarkButton}" Margin="0,0,6,0" Click="OnLoad"/>
+        <Button Content="💾 Sauvegarder" Style="{StaticResource DarkButton}" Click="OnSave"/>
+        <Button Content="📄 Importer PDF" Style="{StaticResource DarkButton}" Margin="6,0,0,0"
+                Click="OnImportPdf"
+                ToolTip="Convertir un PDF ou ZIP en slides PNG (slide_001.png, slide_002.png, …)"/>
+        <Button Content="🎙 Voix off" Style="{StaticResource DarkButton}" Margin="6,0,0,0"
+                Click="OnGenerateVoiceFromScript"
+                ToolTip="Choisir un script texte et générer un fichier audio (SAPI par défaut, Azure si configuré)"/>
+        <Button Content="📷 Caméra" Style="{StaticResource DarkButton}" Margin="6,0,0,0"
+                Click="OnOpenCamStudio"
+                ToolTip="Studio caméra : face-cam (filtres façon NVIDIA Broadcast) + téléprompteur + enregistrement, dans RoleplayOverlay"/>
+        <Button Content="🎬 Importer clips" Style="{StaticResource DarkButton}" Margin="6,0,0,0"
+                Click="OnImportComposedClips"
+                ToolTip="Choisir plusieurs clips composés (FaceCam\Composed) : crée une ligne par clip, dans l'ordre du nom, en français"/>
+        <TextBlock x:Name="SaveIndicator" Text="✓" FontSize="14" FontWeight="Bold"
+                   Foreground="#4DC93C" VerticalAlignment="Center" Margin="10,0,0,0"
+                   ToolTip="Projet sauvegardé" Opacity="0.7"/>
+      </StackPanel>
+      <Border DockPanel.Dock="Right" Width="1" Background="{StaticResource Line}" Margin="14,8"/>
+      <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
+        <TextBlock Text="Bulles :" Foreground="{StaticResource Fg2}" FontSize="11" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <CheckBox x:Name="ShowYouCheck" Content="Vous" IsChecked="False" Margin="0,0,10,0" Checked="OnBubbleVisibilityChanged" Unchecked="OnBubbleVisibilityChanged"/>
+        <CheckBox x:Name="ShowBot1Check" Content="Bot 1" IsChecked="False" Margin="0,0,10,0" Checked="OnBubbleVisibilityChanged" Unchecked="OnBubbleVisibilityChanged"/>
+        <CheckBox x:Name="ShowBot2Check" Content="Bot 2" IsChecked="False" Checked="OnBubbleVisibilityChanged" Unchecked="OnBubbleVisibilityChanged"/>
+      </StackPanel></DockPanel></Border>
+    <Border Grid.Row="1" Background="{StaticResource Line}"/>
+    <Grid Grid.Row="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="200" MinWidth="160"/><ColumnDefinition Width="1"/>
+        <ColumnDefinition Width="*" MinWidth="400"/><ColumnDefinition Width="1"/>
+        <ColumnDefinition Width="320" MinWidth="280"/>
+      </Grid.ColumnDefinitions>
+      <DockPanel Grid.Column="0" Background="{StaticResource Bg2}" LastChildFill="True">
+
+        <Border DockPanel.Dock="Top" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="10,8">
+          <DockPanel>
+            <TextBlock Text="SCÈNES" Style="{StaticResource SectionLabel}" VerticalAlignment="Center" Margin="0"/>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+              <Button Content="✏" Style="{StaticResource IconButton}" Padding="6,3" FontSize="11"
+                      Click="OnRenameScene"    ToolTip="Renommer la scène (ou double-clic sur le nom)"/>
+              <Button Content="⧉" Style="{StaticResource IconButton}" Padding="6,3" FontSize="11"
+                      Click="OnDuplicateScene" ToolTip="Dupliquer la scène sélectionnée"/>
+              <Button Content="✕" Style="{StaticResource IconButton}" Padding="6,3" FontSize="11"
+                      Click="OnDeleteScene"    ToolTip="Supprimer la scène sélectionnée"/>
+              <Button Content="+" Style="{StaticResource IconButton}" Padding="6,3" FontSize="11"
+                      Click="OnAddScene"       ToolTip="Nouvelle scène"/>
+            </StackPanel>
+          </DockPanel>
+        </Border>
+
+        <ListBox x:Name="SceneList" DockPanel.Dock="Top"
+                 MaxHeight="220" MinHeight="60"
+                 Background="Transparent" BorderThickness="0"
+                 Foreground="{StaticResource Fg}"
+                 SelectionChanged="OnSceneSelected"
+                 AllowDrop="True"
+                 PreviewMouseLeftButtonDown="OnSceneListPreviewMouseDown"
+                 PreviewMouseMove="OnSceneListMouseMove"
+                 DragOver="OnSceneListDragOver"
+                 Drop="OnSceneListDrop"
+                 VirtualizingPanel.ScrollUnit="Pixel"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+          <ListBox.Resources>
+            <Style x:Key="SceneScrollThumb" TargetType="Thumb">
+              <Setter Property="Template">
+                <Setter.Value>
+                  <ControlTemplate TargetType="Thumb">
+                    <Border Background="#55FFFFFF" CornerRadius="2" Margin="1,2"/>
+                    <ControlTemplate.Triggers>
+                      <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#99FFFFFF"/>
+                      </Trigger>
+                      <Trigger Property="IsDragging" Value="True">
+                        <Setter Property="Background" Value="#CCFFFFFF"/>
+                      </Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </Setter.Value>
+              </Setter>
+            </Style>
+
+            <Style TargetType="ScrollBar">
+              <Setter Property="Width" Value="5"/>
+              <Setter Property="MinWidth" Value="5"/>
+              <Setter Property="Background" Value="Transparent"/>
+              <Setter Property="Template">
+                <Setter.Value>
+                  <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="Transparent" Width="5">
+                      <RepeatButton x:Name="PART_LineUpButton"
+                                    Height="0" Command="ScrollBar.LineUpCommand"
+                                    Opacity="0" Focusable="False"/>
+                      <Track x:Name="PART_Track" IsDirectionReversed="True">
+                        <Track.DecreaseRepeatButton>
+                          <RepeatButton Command="ScrollBar.PageUpCommand"
+                                        Background="Transparent" BorderThickness="0"
+                                        Opacity="0" Focusable="False"/>
+                        </Track.DecreaseRepeatButton>
+                        <Track.Thumb>
+                          <Thumb Style="{StaticResource SceneScrollThumb}"/>
+                        </Track.Thumb>
+                        <Track.IncreaseRepeatButton>
+                          <RepeatButton Command="ScrollBar.PageDownCommand"
+                                        Background="Transparent" BorderThickness="0"
+                                        Opacity="0" Focusable="False"/>
+                        </Track.IncreaseRepeatButton>
+                      </Track>
+                      <RepeatButton x:Name="PART_LineDownButton"
+                                    Height="0" Command="ScrollBar.LineDownCommand"
+                                    Opacity="0" Focusable="False" VerticalAlignment="Bottom"/>
+                    </Grid>
+                  </ControlTemplate>
+                </Setter.Value>
+              </Setter>
+            </Style>
+          </ListBox.Resources>
+
+          <ListBox.ItemTemplate>
+            <DataTemplate DataType="{x:Type local:EditorWindow+SceneDisplayItem}">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="16"/>
+                  <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="{Binding SlideIcon}"
+                           Foreground="{Binding SlideColor}"
+                           FontSize="10" FontWeight="Bold"
+                           VerticalAlignment="Center"
+                           ToolTip="{Binding SlideTooltip}"
+                           Margin="0,0,4,0"/>
+
+                <TextBlock Grid.Column="1"
+                           Text="{Binding Name}"
+                           VerticalAlignment="Center"
+                           FontSize="11"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip="{Binding Name}"
+                           MouseLeftButtonDown="OnSceneNameDoubleClick"/>
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+
+          <ListBox.ItemContainerStyle>
+            <Style TargetType="ListBoxItem">
+              <Setter Property="Background" Value="Transparent"/>
+              <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+              <Setter Property="Padding" Value="8,5"/>
+              <Setter Property="AllowDrop" Value="True"/>
+              <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+              <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                  <Setter Property="Background" Value="#88E84118"/>
+                  <Setter Property="BorderBrush" Value="#E84118"/>
+                  <Setter Property="BorderThickness" Value="3,0,0,0"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                  <Setter Property="Background" Value="#12FFFFFF"/>
+                </Trigger>
+              </Style.Triggers>
+            </Style>
+          </ListBox.ItemContainerStyle>
+        </ListBox>
+
+        <Border DockPanel.Dock="Top" Height="1" Background="{StaticResource Line}"/>
+
+        <StackPanel DockPanel.Dock="Top" Margin="10,10,10,0">
+          <TextBlock Text="MONITEUR" Style="{StaticResource SectionLabel}"/>
+          <ComboBox x:Name="DisplayBox" Margin="0,0,0,6" SelectionChanged="OnMonitorChanged"/>
+          <StackPanel Orientation="Horizontal">
+            <Button Content="↻" Style="{StaticResource IconButton}" Margin="0,0,6,0" Click="OnRefreshMonitors" ToolTip="Actualiser la liste des écrans"/>
+            <Button Content="Appliquer" Style="{StaticResource IconButton}" Click="OnApplyMonitor"/>
+          </StackPanel>
+        </StackPanel>
+
+        <Border DockPanel.Dock="Top" Height="1" Background="{StaticResource Line}" Margin="0,12,0,0"/>
+
+        <StackPanel DockPanel.Dock="Top" Margin="10,10,10,0">
+          <TextBlock Text="VOIX TTS" Style="{StaticResource SectionLabel}"/>
+          <Grid Margin="0,0,0,6">
+            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="6"/><ColumnDefinition/></Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+              <TextBlock Text="Bot 1" FontSize="9" FontWeight="SemiBold" Foreground="#FF00FF" Margin="0,0,0,3"/>
+              <ComboBox x:Name="Bot1VoiceBox" FontSize="10" SelectionChanged="OnQuickVoiceChanged">
+                <ComboBoxItem Content="en-US" Tag="en-US"/>
+                <ComboBoxItem Content="en-GB" Tag="en-GB"/>
+                <ComboBoxItem Content="en-AU" Tag="en-AU"/>
+                <ComboBoxItem Content="en-CA" Tag="en-CA"/>
+              </ComboBox>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="Bot 2" FontSize="9" FontWeight="SemiBold" Foreground="#00FFFF" Margin="0,0,0,3"/>
+              <ComboBox x:Name="Bot2VoiceBox" FontSize="10" SelectionChanged="OnQuickVoiceChanged">
+                <ComboBoxItem Content="fr-FR" Tag="fr-FR"/>
+                <ComboBoxItem Content="fr-BE" Tag="fr-BE"/>
+                <ComboBoxItem Content="fr-CA" Tag="fr-CA"/>
+              </ComboBox>
+            </StackPanel>
+          </Grid>
+          <Button Content="↻ Appliquer à toutes" Style="{StaticResource IconButton}"
+                  HorizontalAlignment="Stretch" FontSize="9" Padding="4,4"
+                  Click="OnApplyVoiceToAll"
+                  ToolTip="Applique la voix Bot1/Bot2 à toutes les séquences correspondantes"/>
+          <TextBlock Text="You → ignoré" FontSize="9" Foreground="{StaticResource Fg2}" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <Border DockPanel.Dock="Top" Height="1" Background="{StaticResource Line}" Margin="0,12,0,0"/>
+
+        <StackPanel DockPanel.Dock="Bottom" Margin="10,10">
+          <TextBlock x:Name="StatsBlock"  Text="0 séquences" Foreground="{StaticResource Fg2}" FontSize="10"/>
+          <TextBlock x:Name="StatsDur"    Text=""            Foreground="{StaticResource Fg2}" FontSize="10" Margin="0,2,0,0"/>
+          <TextBlock x:Name="StatsMedia"  Text=""            Foreground="{StaticResource Fg2}" FontSize="10" Margin="0,2,0,0"/>
+        </StackPanel>
+
+        <Border Background="Transparent"/>
+      </DockPanel>
+      <Border Grid.Column="1" Style="{StaticResource VSep}"/>
+      <Grid Grid.Column="2">
+        <Grid.RowDefinitions><RowDefinition Height="42"/><RowDefinition Height="1"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+
+        <Border x:Name="SearchBar" Grid.Row="2" Background="#1A1A1D" BorderBrush="{StaticResource Line}"
+                BorderThickness="0,0,0,1" Padding="8,6" Visibility="Visible">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition x:Name="ReplaceRow" Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <DockPanel Grid.Row="0">
+              <Button DockPanel.Dock="Right" Content="X" FontSize="12" Padding="6,2" Margin="4,0,0,0"
+                      Style="{StaticResource IconButton}" Click="OnSearchClose" ToolTip="Fermer (Esc)"/>
+              <Button x:Name="BtnToggleReplace" Content="&#x21C4;" FontSize="13" Padding="6,2" Margin="4,0,0,0"
+                      Style="{StaticResource IconButton}" Click="OnToggleReplace"
+                      ToolTip="Afficher/masquer le remplacement (Ctrl+H)"/>
+              <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="6,0,0,0">
+                <TextBlock x:Name="SearchCountLabel" Text="" Foreground="{StaticResource Fg2}"
+                           FontSize="10" FontFamily="Consolas" VerticalAlignment="Center" MinWidth="50"
+                           TextAlignment="Center"/>
+                <Button Content="^" FontSize="10" Padding="6,2" Style="{StaticResource IconButton}"
+                        Click="OnSearchPrev" ToolTip="Occurrence precedente (Shift+F3)"/>
+                <Button Content="v" FontSize="10" Padding="6,2" Style="{StaticResource IconButton}"
+                        Click="OnSearchNext" ToolTip="Occurrence suivante (F3)"/>
+              </StackPanel>
+              <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="6,0,0,0">
+                <CheckBox x:Name="SearchCaseCheck" Content="Aa" Foreground="{StaticResource Fg2}"
+                          FontSize="10" VerticalAlignment="Center" Margin="0,0,4,0"
+                          ToolTip="Sensible a la casse" Checked="OnSearchTermChanged" Unchecked="OnSearchTermChanged"/>
+                <CheckBox x:Name="SearchFieldsCheck" Content="Tout" Foreground="{StaticResource Fg2}"
+                          FontSize="10" VerticalAlignment="Center"
+                          ToolTip="Chercher aussi dans Note/Speaker/Voice (sinon Texte seul)"
+                          Checked="OnSearchTermChanged" Unchecked="OnSearchTermChanged"/>
+              </StackPanel>
+              <TextBox x:Name="SearchBox" Margin="0,0,4,0" FontSize="11" Padding="6,4"
+                       Background="#111113" Foreground="{StaticResource Fg}"
+                       BorderBrush="{StaticResource Line}" BorderThickness="1"
+                       TextChanged="OnSearchTermChanged"
+                       KeyDown="OnSearchBoxKeyDown"/>
+            </DockPanel>
+
+            <DockPanel x:Name="ReplacePanel" Grid.Row="1" Margin="0,6,0,0" Visibility="Collapsed">
+              <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="4,0,0,0">
+                <Button Content="Remplacer" FontSize="10" Padding="8,3" Style="{StaticResource IconButton}"
+                        Click="OnReplaceCurrent" ToolTip="Remplacer l'occurrence courante"/>
+                <Button Content="Tout" FontSize="10" Padding="8,3" Style="{StaticResource IconButton}"
+                        Click="OnReplaceAll" ToolTip="Remplacer toutes les occurrences"/>
+              </StackPanel>
+              <TextBox x:Name="ReplaceBox" Margin="0,0,4,0" FontSize="11" Padding="6,4"
+                       Background="#111113" Foreground="{StaticResource Fg}"
+                       BorderBrush="{StaticResource Line}" BorderThickness="1"
+                       KeyDown="OnReplaceBoxKeyDown"/>
+            </DockPanel>
+          </Grid>
+        </Border>
+        <Border Grid.Row="0" Background="{StaticResource Bg2}" Padding="10,0">
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <Button Content="+ Ligne" Style="{StaticResource IconButton}" Click="OnAdd" ToolTip="Ins"/>
+            <Button Content="✕ Suppr" Style="{StaticResource IconButton}" Click="OnRemove" ToolTip="Ctrl+Del"/>
+            <Border Width="1" Background="{StaticResource Line}" Margin="4,8"/>
+            <Button Content="▲" Style="{StaticResource IconButton}" Click="OnUp"/><Button Content="▼" Style="{StaticResource IconButton}" Click="OnDown"/>
+            <Border Width="1" Background="{StaticResource Line}" Margin="4,8"/>
+            <Button x:Name="BtnUndo" Content="↩" Style="{StaticResource IconButton}" Click="OnUndo" ToolTip="Annuler (Ctrl+Z)" IsEnabled="False"/>
+            <Button x:Name="BtnRedo" Content="↪" Style="{StaticResource IconButton}" Click="OnRedo" ToolTip="Rétablir (Ctrl+Y)" IsEnabled="False"/>
+            <Border Width="1" Background="{StaticResource Line}" Margin="4,8"/>
+            <Button Content="▶ Jouer" Style="{StaticResource IconButton}" Click="OnPlaySelected"/>
+            <Button Content="⏹ Stop" Style="{StaticResource IconButton}" Click="OnStop"/>
+            <Border Width="1" Background="{StaticResource Line}" Margin="4,8"/>
+            <TextBlock Text="Tri" Foreground="{StaticResource Fg2}" FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
+            <ComboBox x:Name="SortModeBox" Width="170" Height="28" VerticalAlignment="Center"
+                      FontSize="12" SelectionChanged="OnSortModeChanged"
+                      ToolTip="Mode de tri de la grille">
+              <ComboBoxItem Content="📋 Ordre libre"/>
+              <ComboBoxItem Content="🔗 Paires EN→FR"/>
+              <ComboBoxItem Content="🔗 Paires FR→EN"/>
+            </ComboBox>
+            <Button x:Name="BtnLinkPair" Content="🔗 Lier" Style="{StaticResource IconButton}" Click="OnLinkPairClick"
+                    Margin="6,0,0,0" ToolTip="Lier les 2 séquences sélectionnées en paire (Ctrl+L)"/>
+            <Border Width="1" Background="{StaticResource Line}" Margin="4,8"/>
+            <Button Content="&#x2702; Split" Style="{StaticResource IconButton}" Click="OnSplitSequence" ToolTip="Diviser la sequence selectionnee (Ctrl+Shift+X)"/>
+            <Border Margin="10,0,0,0" VerticalAlignment="Center">
+              <TextBlock x:Name="ActiveLineLabel" Foreground="{StaticResource Fg2}" FontSize="11" Text="Aucune ligne active"/></Border>
+          </StackPanel></Border>
+        <Border Grid.Row="1" Background="{StaticResource Line}"/>
+        <DataGrid x:Name="GridItems" Grid.Row="3" Background="Transparent" AutoGenerateColumns="False"
+                  CanUserAddRows="False" IsReadOnly="False" SelectionMode="Extended"
+                  CanUserResizeRows="True"
+                  HeadersVisibility="All"
+                  RowHeight="28"
+                  MinRowHeight="24"
+                  MouseDoubleClick="OnGridMouseDoubleClick" SelectionChanged="OnGridSelectionChanged"
+                  LoadingRow="OnGridLoadingRow" CellEditEnding="OnCellEditEnding"
+                  BeginningEdit="OnGridBeginningEdit"
+                  PreviewMouseWheel="OnGridPreviewMouseWheel">
+          <DataGrid.RowHeaderStyle>
+            <Style TargetType="DataGridRowHeader">
+              <Setter Property="Width" Value="5"/>
+              <Setter Property="Background" Value="#1AFFFFFF"/>
+              <Setter Property="BorderThickness" Value="0"/>
+            </Style>
+          </DataGrid.RowHeaderStyle>
+          <DataGrid.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="&#x2702; Diviser la s&#233;quence&#x2026;" Click="OnSplitSequence" ToolTip="Ctrl+Shift+X"/>
+              <MenuItem Header="&#x1F517; Fusionner avec la ligne suivante" Click="OnMergeWithNext"
+                        ToolTip="Met les 2 clips compos&#233;s bout &#224; bout (sans r&#233;encodage), encha&#238;ne les textes et fusionne les m&#233;dias du montage"/>
+              <Separator/>
+              <MenuItem Header="+ Ajouter une ligne" Click="OnAdd"/>
+              <MenuItem Header="&#x2715; Supprimer la ligne" Click="OnRemove"/>
+              <Separator/>
+              <MenuItem Header="&#x25B2; Monter" Click="OnUp"/>
+              <MenuItem Header="&#x25BC; Descendre" Click="OnDown"/>
+            </ContextMenu>
+          </DataGrid.ContextMenu>
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="#" Width="36" IsReadOnly="True"
+              Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow},Converter={x:Static local:RowIndexConverter.Instance}}">
+              <DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="Foreground" Value="{StaticResource Fg2}"/><Setter Property="Padding" Value="6,0"/></Style></DataGridTextColumn.ElementStyle></DataGridTextColumn>
+            <DataGridTemplateColumn Header="Paire" Width="38" IsReadOnly="True"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+              <Border Background="{Binding PairId, Converter={x:Static local:PairColorConverter.Instance}}"
+                      CornerRadius="2" Margin="2,1">
+                <TextBlock Text="{Binding IsPaired, Converter={x:Static local:PairBadgeConverter.Instance}}"
+                           FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           ToolTip="{Binding PairId}"/>
+              </Border>
+            </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+
+            <DataGridTemplateColumn Header="Durée" Width="52" IsReadOnly="True" SortMemberPath="EstimatedDuration">
+              <DataGridTemplateColumn.CellTemplate><DataTemplate>
+                <TextBlock Text="{Binding DurationDisplay}" FontSize="9" FontFamily="Consolas"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           ToolTip="Durée TTS estimée · gris = heuristique · vert = SAPI exact">
+                  <TextBlock.Style><Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="{StaticResource Fg2}"/>
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding DurationIsExact}" Value="True">
+                        <Setter Property="Foreground" Value="{StaticResource LangEN}"/>
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style></TextBlock.Style>
+                </TextBlock>
+              </DataTemplate></DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+
+            <DataGridTemplateColumn Header="Spk" Width="50">
+              <DataGridTemplateColumn.CellTemplate><DataTemplate>
+                <Border CornerRadius="4" Padding="4,1" HorizontalAlignment="Center">
+                  <Border.Style><Style TargetType="Border"><Style.Triggers>
+                    <DataTrigger Binding="{Binding Speaker}" Value="you"><Setter Property="Background" Value="#33FFD400"/></DataTrigger>
+                    <DataTrigger Binding="{Binding Speaker}" Value="bot1"><Setter Property="Background" Value="#22FF00FF"/></DataTrigger>
+                    <DataTrigger Binding="{Binding Speaker}" Value="bot2"><Setter Property="Background" Value="#2200FFFF"/></DataTrigger>
+                  </Style.Triggers></Style></Border.Style>
+                  <TextBlock FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Center"><TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers>
+                    <DataTrigger Binding="{Binding Speaker}" Value="you"><Setter Property="Text" Value="YOU"/><Setter Property="Foreground" Value="#FFD400"/></DataTrigger>
+                    <DataTrigger Binding="{Binding Speaker}" Value="bot1"><Setter Property="Text" Value="B1"/><Setter Property="Foreground" Value="#FF00FF"/></DataTrigger>
+                    <DataTrigger Binding="{Binding Speaker}" Value="bot2"><Setter Property="Text" Value="B2"/><Setter Property="Foreground" Value="#00FFFF"/></DataTrigger>
+                    <DataTrigger Binding="{Binding Speaker}" Value="{x:Null}"><Setter Property="Text" Value="B1"/><Setter Property="Foreground" Value="#FF00FF"/></DataTrigger>
+                  </Style.Triggers></Style></TextBlock.Style></TextBlock></Border>
+              </DataTemplate></DataGridTemplateColumn.CellTemplate>
+              <DataGridTemplateColumn.CellEditingTemplate><DataTemplate>
+                <ComboBox SelectedItem="{Binding Speaker, UpdateSourceTrigger=PropertyChanged}" FontSize="11">
+                  <sys:String>you</sys:String><sys:String>bot1</sys:String><sys:String>bot2</sys:String></ComboBox>
+              </DataTemplate></DataGridTemplateColumn.CellEditingTemplate></DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="Lang" Width="56"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+              <TextBlock FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Center"><TextBlock.Style><Style TargetType="TextBlock">
+                <Setter Property="Text" Value="—"/><Setter Property="Foreground" Value="{StaticResource Fg2}"/><Style.Triggers>
+                <DataTrigger Binding="{Binding Voice}" Value="en-US"><Setter Property="Text" Value="🇬🇧 EN"/><Setter Property="Foreground" Value="{StaticResource LangEN}"/></DataTrigger>
+                <DataTrigger Binding="{Binding Voice}" Value="en-GB"><Setter Property="Text" Value="🇬🇧 EN"/><Setter Property="Foreground" Value="{StaticResource LangEN}"/></DataTrigger>
+                <DataTrigger Binding="{Binding Voice}" Value="fr-FR"><Setter Property="Text" Value="🇫🇷 FR"/><Setter Property="Foreground" Value="{StaticResource LangFR}"/></DataTrigger>
+              </Style.Triggers></Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate>
+              <DataGridTemplateColumn.CellEditingTemplate><DataTemplate>
+                <ComboBox SelectedItem="{Binding Voice, UpdateSourceTrigger=PropertyChanged}" FontSize="11">
+                  <sys:String>fr-FR</sys:String><sys:String>en-US</sys:String></ComboBox></DataTemplate></DataGridTemplateColumn.CellEditingTemplate></DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="Mode" Width="60"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+              <Border CornerRadius="4" Padding="4,1" HorizontalAlignment="Center">
+                <Border.Style><Style TargetType="Border"><Style.Triggers>
+                  <DataTrigger Binding="{Binding Mode}" Value="mp3"><Setter Property="Background" Value="#22E84118"/></DataTrigger>
+                  <DataTrigger Binding="{Binding Mode}" Value="tts"><Setter Property="Background" Value="#221A6B3C"/></DataTrigger>
+                </Style.Triggers></Style></Border.Style>
+                <TextBlock Text="{Binding Mode}" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Center"><TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers>
+                  <DataTrigger Binding="{Binding Mode}" Value="mp3"><Setter Property="Foreground" Value="#E84118"/></DataTrigger>
+                  <DataTrigger Binding="{Binding Mode}" Value="tts"><Setter Property="Foreground" Value="#4DC93C"/></DataTrigger>
+                </Style.Triggers></Style></TextBlock.Style></TextBlock></Border>
+            </DataTemplate></DataGridTemplateColumn.CellTemplate>
+              <DataGridTemplateColumn.CellEditingTemplate><DataTemplate>
+                <ComboBox SelectedItem="{Binding Mode, UpdateSourceTrigger=PropertyChanged}" FontSize="11">
+                  <sys:String>mp3</sys:String><sys:String>tts</sys:String></ComboBox></DataTemplate></DataGridTemplateColumn.CellEditingTemplate></DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="Clip" Width="42" IsReadOnly="True">
+              <DataGridTemplateColumn.CellTemplate><DataTemplate>
+                <TextBlock Text="{Binding ClipBadge}" ToolTip="{Binding ClipTooltip}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="13"/>
+              </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+            <DataGridTextColumn Header="Note" Width="120" Binding="{Binding Note, UpdateSourceTrigger=PropertyChanged}">
+              <DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="Foreground" Value="{StaticResource Fg2}"/>
+                <Setter Property="FontSize" Value="11"/><Setter Property="Padding" Value="4,0"/><Setter Property="TextTrimming" Value="CharacterEllipsis"/></Style></DataGridTextColumn.ElementStyle></DataGridTextColumn>
+            <DataGridTextColumn x:Name="TextCol" Header="Texte / Script" Width="3*"
+                                Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}">
+              <DataGridTextColumn.ElementStyle>
+                <Style TargetType="TextBlock">
+                  <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+                  <Setter Property="FontSize" Value="11"/>
+                  <Setter Property="Padding" Value="6,0"/>
+                  <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                  <Setter Property="VerticalAlignment" Value="Center"/>
+                  <Setter Property="ToolTip" Value="{Binding Text}"/>
+                </Style>
+              </DataGridTextColumn.ElementStyle>
+              <DataGridTextColumn.EditingElementStyle>
+                <Style TargetType="TextBox">
+                  <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+                  <Setter Property="FontSize" Value="11"/>
+                  <Setter Property="Padding" Value="6,0"/>
+                  <Setter Property="Background" Value="#0B0B0C"/>
+                  <Setter Property="BorderThickness" Value="0"/>
+                  <Setter Property="AcceptsReturn" Value="False"/>
+                  <Setter Property="VerticalContentAlignment" Value="Center"/>
+                </Style>
+              </DataGridTextColumn.EditingElementStyle>
+            </DataGridTextColumn>
+            <DataGridTemplateColumn Header="" Width="36"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+              <Button Content="✏" Padding="2,0" Style="{StaticResource IconButton}" Tag="{Binding}" ToolTip="Éditeur plein écran" Click="OnEditTextClick" FontSize="12"/>
+            </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+
+            <DataGridTemplateColumn Header="Média" Width="92">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                  <Button Padding="2,3" Style="{StaticResource IconButton}" Tag="{Binding}"
+                          Click="OnPickMediaClick" ToolTip="Clic = assigner · Clic droit = options">
+                    <Button.ContextMenu>
+                      <ContextMenu>
+                        <MenuItem Header="— Fichier courant (copie projet) —" IsEnabled="False" FontWeight="SemiBold"/>
+                        <MenuItem Header="👁 Ouvrir le fichier courant" Tag="{Binding}" Click="OnGridMediaCtxOpenCurrent"/>
+                        <MenuItem Header="🗂 Localiser dans l'explorateur" Tag="{Binding}" Click="OnGridMediaCtxShowInExplorer"/>
+                        <MenuItem Header="⧉ Copier le chemin courant" Tag="{Binding}" Click="OnGridMediaCtxCopyPath"/>
+                        <Separator/>
+                        <MenuItem Header="— Source originale —" IsEnabled="False" FontWeight="SemiBold"/>
+                        <MenuItem Header="👁 Ouvrir la source originale" Tag="{Binding}" Click="OnGridMediaCtxViewSource"/>
+                        <MenuItem Header="🗂 Source dans l'explorateur" Tag="{Binding}" Click="OnGridMediaCtxSourceInExplorer"/>
+                        <MenuItem Header="⧉ Copier le chemin source" Tag="{Binding}" Click="OnGridMediaCtxCopySourcePath"/>
+                        <Separator/>
+                        <MenuItem Header="🔄 Migrer vers le dossier projet" Tag="{Binding}" Click="OnGridMediaCtxMigrate"
+                                  ToolTip="Copie le fichier courant dans slides/{projet}/media/ et met à jour le lien"/>
+                        <Separator/>
+                        <MenuItem Header="✕ Retirer le média" Tag="{Binding}" Click="OnClearMediaClick"/>
+                      </ContextMenu>
+                    </Button.ContextMenu>
+                    <StackPanel HorizontalAlignment="Center" MaxWidth="86">
+
+                      <Grid Height="38">
+
+                        <Image MaxHeight="38" MaxWidth="86" Stretch="Uniform"
+                               RenderOptions.BitmapScalingMode="HighQuality"
+                               Source="{Binding MediaPath, Converter={x:Static local:MediaThumbnailConverter.Instance}}"
+                               Visibility="{Binding MediaPath, Converter={x:Static local:MediaHasImagePreviewConverter.Instance}}"/>
+
+                        <TextBlock FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Foreground="{StaticResource Fg2}"
+                                   Text="{Binding MediaPath, Converter={x:Static local:MediaBadgeIconConverter.Instance}}"
+                                   Visibility="{Binding MediaPath, Converter={x:Static local:MediaNoImagePreviewConverter.Instance}}"/>
+
+                        <Image MaxHeight="38" MaxWidth="86" Stretch="Uniform"
+                               RenderOptions.BitmapScalingMode="HighQuality"
+                               Source="{Binding Converter={x:Static local:MosaicThumbnailConverter.Instance}}"
+                               Visibility="{Binding Converter={x:Static local:HasMosaicConverter.Instance}}"/>
+                      </Grid>
+
+                      <TextBlock Text="{Binding Converter={x:Static local:MosaicFileNameConverter.Instance}}"
+                                 FontSize="8" FontFamily="Consolas" Foreground="{StaticResource Fg2}"
+                                 TextTrimming="CharacterEllipsis" HorizontalAlignment="Center"
+                                 MaxWidth="86" Margin="0,2,0,0"/>
+                    </StackPanel>
+                  </Button>
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Audio" Width="110">
+              <DataGridTemplateColumn.CellTemplate><DataTemplate>
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="26"/>
+                  </Grid.ColumnDefinitions>
+
+                  <Button Grid.Column="0" Padding="2,3" Style="{StaticResource IconButton}" Tag="{Binding}"
+                          Click="OnPickMp3Click" ToolTip="Clic = assigner audio &#xB7; Clic droit = options">
+                    <Button.ContextMenu>
+
+                      <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                        <MenuItem Header="&#x25BA; R&#xE9;&#xE9;couter" Tag="{Binding}" Click="OnPlayAudioClick"/>
+                        <MenuItem Header="&#x23F9; Arr&#xEA;ter la lecture" Click="OnStopAudioPlayback"/>
+                        <Separator/>
+                        <MenuItem Header="Retirer l'audio" Tag="{Binding}" Click="OnClearMp3Click"/>
+                      </ContextMenu>
+                    </Button.ContextMenu>
+                    <StackPanel HorizontalAlignment="Center" MaxWidth="72">
+                      <Grid Height="38">
+
+                        <TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Foreground="{StaticResource Fg2}">
+                          <TextBlock.Style><Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="&#x1F3A4;"/>
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding Mode}" Value="mp3">
+                                <Setter Property="Text" Value="&#x1F3B5;"/>
+                                <Setter Property="Foreground" Value="#E84118"/>
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style></TextBlock.Style>
+                        </TextBlock>
+                      </Grid>
+
+                      <TextBlock FontSize="8" FontFamily="Consolas"
+                                 TextTrimming="CharacterEllipsis" HorizontalAlignment="Center"
+                                 MaxWidth="72" Margin="0,2,0,0"
+                                 Text="{Binding Mp3, Converter={x:Static local:MediaFileNameConverter.Instance}}">
+                        <TextBlock.Style><Style TargetType="TextBlock">
+                          <Setter Property="Foreground" Value="{StaticResource Fg2}"/>
+                          <Style.Triggers>
+                            <DataTrigger Binding="{Binding Mode}" Value="mp3">
+                              <Setter Property="Foreground" Value="#E84118"/>
+                            </DataTrigger>
+                          </Style.Triggers>
+                        </Style></TextBlock.Style>
+                      </TextBlock>
+                    </StackPanel>
+                  </Button>
+
+                  <Button Grid.Column="1"
+                          Padding="2,3" Style="{StaticResource IconButton}"
+                          Tag="{Binding}"
+                          Click="OnRecordClick"
+                          ToolTip="Enregistrer depuis le micro">
+                    <TextBlock FontSize="14" Text="&#x1F399;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                  </Button>
+
+                </Grid>
+              </DataTemplate></DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridCheckBoxColumn Header="Txt" Width="36" Binding="{Binding ShowText}"/>
+
+          </DataGrid.Columns></DataGrid></Grid>
+      <Border Grid.Column="3" Style="{StaticResource VSep}"/>
+
+      <DockPanel Grid.Column="4" Background="{StaticResource Bg2}" LastChildFill="True">
+        <Border DockPanel.Dock="Top" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="560">
+            <StackPanel Margin="10,8,10,8">
+              <DockPanel Margin="0,0,0,4">
+                <TextBlock Text="🎬 MÉDIA OVERLAY" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource Fg2}" VerticalAlignment="Center"/>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                  <Button x:Name="BtnExpandPreview" Content="⤢" FontSize="12" Style="{StaticResource IconButton}" Padding="5,2"
+                          Click="OnToggleExpandPreview" ToolTip="Agrandir / réduire l'aperçu"/>
+                  <Button Content="📂" FontSize="10" Style="{StaticResource IconButton}" Padding="5,2" Click="OnMediaPanelBrowse" ToolTip="Assigner un média"/>
+                  <Button Content="✕" FontSize="10" Style="{StaticResource IconButton}" Padding="5,2" Click="OnMediaPanelClear" ToolTip="Retirer"/></StackPanel></DockPanel>
+
+              <DockPanel Margin="0,2,0,6">
+                <TextBlock Text="📷 Clip cam" DockPanel.Dock="Left" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource Fg2}" VerticalAlignment="Center"/>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                  <Button Content="📋" FontSize="10" Style="{StaticResource IconButton}" Padding="5,2" Click="OnOpenTakeManager" ToolTip="Gestionnaire de prises : lire / supprimer les prises ratées / assigner la bonne à cette ligne, sans renommer de fichier"/>
+                  <Button Content="📷" FontSize="10" Style="{StaticResource IconButton}" Padding="5,2" Click="OnCamClipBrowse" ToolTip="Associer un clip face-cam (dossier FaceCam) à cette séquence : il pilotera la voix + durée et s'incrustera en PiP rond"/>
+                  <Button Content="✕" FontSize="10" Style="{StaticResource IconButton}" Padding="5,2" Click="OnCamClipClear" ToolTip="Retirer le clip cam de cette séquence"/></StackPanel>
+                <TextBlock x:Name="CamClipLabel" Text="aucun" FontSize="9" Foreground="#888" VerticalAlignment="Center" Margin="8,0,0,0" TextTrimming="CharacterEllipsis"/></DockPanel>
+
+              <DockPanel Margin="0,2,0,6">
+                <TextBlock Text="🎬 Clip composé" DockPanel.Dock="Left" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource Fg2}" VerticalAlignment="Center"/>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                  <Button Content="🎬" FontSize="10" Style="{StaticResource IconButton}" Padding="5,2" Click="OnComposedClipBrowse" ToolTip="Associer un clip déjà composé (dossier FaceCam\Composed, mode 'fond diapo' du Studio) à cette séquence : utilisé tel quel, pas de PiP à recomposer"/>
+                  <Button Content="✕" FontSize="10" Style="{StaticResource IconButton}" Padding="5,2" Click="OnComposedClipClear" ToolTip="Retirer le clip composé de cette séquence"/></StackPanel>
+                <TextBlock x:Name="ComposedClipLabel" Text="aucun" FontSize="9" Foreground="#888" VerticalAlignment="Center" Margin="8,0,0,0" TextTrimming="CharacterEllipsis"/></DockPanel>
+              <Button x:Name="TimelineBtn" Content="🎞 Montage (timeline)" Style="{StaticResource DarkButton}"
+                      Margin="0,0,0,6" HorizontalAlignment="Left" Padding="8,3" Click="OnOpenTimeline"
+                      ToolTip="Placer des images/gameplay sur le clip composé : quand elles apparaissent, combien de temps, et où (façon CapCut)"/>
+
+              <Border x:Name="PreviewBorder" Background="#0D0D0F" CornerRadius="5" ClipToBounds="True" Height="120" Margin="0,0,0,4"
+                      MouseLeftButtonDown="OnPreviewThumbClick">
+                <Border.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Header="— Fichier courant (copie projet) —" IsEnabled="False" FontWeight="SemiBold"/>
+                    <MenuItem Header="👁 Ouvrir le fichier courant" Click="OnMediaCtxOpenCurrent"/>
+                    <MenuItem Header="🗂 Localiser dans l'explorateur" Click="OnMediaCtxShowInExplorer"/>
+                    <Separator/>
+                    <MenuItem Header="— Source originale —" IsEnabled="False" FontWeight="SemiBold"/>
+                    <MenuItem Header="👁 Ouvrir la source originale" Click="OnMediaCtxViewSource"/>
+                    <MenuItem Header="🗂 Source dans l'explorateur" Click="OnMediaCtxSourceInExplorer"/>
+                    <Separator/>
+                    <MenuItem Header="🔄 Migrer vers le dossier projet" Click="OnMediaCtxMigrate"
+                              ToolTip="Copie le fichier courant dans slides/{projet}/media/ et met à jour le lien"/>
+                    <Separator/>
+                    <MenuItem Header="✏ Renommer (nom de projet)" Click="OnMediaCtxRename"
+                              ToolTip="Copie le fichier dans le dossier slides avec un nom cohérent et met à jour le lien"/>
+                  </ContextMenu>
+                </Border.ContextMenu>
+                <Grid>
+                <Image x:Name="MediaPreviewImage" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+                <TextBlock x:Name="MediaPreviewPlaceholder" Text="Aucun média&#10;Cliquer 📂 pour ajouter"
+                           TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#555" FontSize="11" TextWrapping="Wrap"/>
+                <TextBlock Text="🔍 Double-clic = plein écran HD" FontSize="9" Foreground="#55FFFFFF"
+                           HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,6,4"
+                           IsHitTestVisible="False"/></Grid></Border>
+
+              <DockPanel Margin="0,0,0,3">
+                <TextBlock Text="Medias" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource Fg}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                <TextBlock x:Name="MediaItemCountLabel" Text="" FontSize="9" Foreground="{StaticResource Fg2}" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                  <Button Content="+" FontSize="14" Style="{StaticResource IconButton}" Padding="4,0" MinWidth="22" Height="20" Click="OnMediaItemAdd" ToolTip="Ajouter un media" Margin="0,0,2,0"/>
+                  <Button Content="▲" FontSize="9" Style="{StaticResource IconButton}" Padding="3,0" MinWidth="18" Height="20" Click="OnMediaItemMoveUp" ToolTip="Monter" Margin="0,0,1,0"/>
+                  <Button Content="▼" FontSize="9" Style="{StaticResource IconButton}" Padding="3,0" MinWidth="18" Height="20" Click="OnMediaItemMoveDown" ToolTip="Descendre" Margin="0,0,2,0"/>
+                  <Button Content="−" FontSize="14" Style="{StaticResource IconButton}" Padding="4,0" MinWidth="22" Height="20" Click="OnMediaItemRemove" ToolTip="Supprimer le media selectionne"/>
+                </StackPanel>
+              </DockPanel>
+              <ListBox x:Name="MediaItemsList" MaxHeight="90" MinHeight="20" FontSize="9" Margin="0,0,0,4"
+                       SelectionChanged="OnMediaItemSelected"
+                       Background="#0AFFFFFF" BorderBrush="#22FFFFFF" BorderThickness="1"
+                       Foreground="{StaticResource Fg}" FontFamily="Consolas"
+                       ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemContainerStyle>
+                  <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="2,1"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                  </Style>
+                </ListBox.ItemContainerStyle>
+              </ListBox>
+              <TextBlock x:Name="MediaFileNameLabel" Text="—" FontSize="9" Foreground="{StaticResource Fg}" FontFamily="Consolas" TextTrimming="CharacterEllipsis" Margin="0,0,0,4"/>
+              <Grid Margin="0,0,0,3"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="6"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0"><TextBlock Text="Scale (0.1–1.0)" FontSize="9" Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+                  <TextBox x:Name="MediaScaleBox" Text="0.80" FontSize="10" TextChanged="OnMediaParamChanged" PreviewKeyDown="OnNumericFieldKeyDown"/></StackPanel>
+                <StackPanel Grid.Column="2"><TextBlock Text="Vitesse (0.25–4.0)" FontSize="9" Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+                  <TextBox x:Name="MediaSpeedBox" Text="1.0" FontSize="10" TextChanged="OnMediaParamChanged" PreviewKeyDown="OnNumericFieldKeyDown"/></StackPanel></Grid>
+              <Grid Margin="0,0,0,3"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="6"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0"><TextBlock Text="Bordure (px)" FontSize="9" Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+                  <TextBox x:Name="MediaBorderBox" Text="6" FontSize="10" TextChanged="OnMediaParamChanged" PreviewKeyDown="OnNumericFieldKeyDown"/></StackPanel>
+                <StackPanel Grid.Column="2"><TextBlock Text="Ombre blur" FontSize="9" Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+                  <TextBox x:Name="MediaShadowBox" Text="18" FontSize="10" TextChanged="OnMediaParamChanged" PreviewKeyDown="OnNumericFieldKeyDown"/></StackPanel></Grid>
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                <TextBlock Text="Ombre α :" FontSize="9" Foreground="{StaticResource Fg2}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                <TextBox x:Name="MediaShadowAlphaBox" Text="0.55" Width="42" FontSize="10" TextChanged="OnMediaParamChanged" PreviewKeyDown="OnNumericFieldKeyDown"/>
+                <CheckBox x:Name="MediaLoopCheck" Content="Boucler" FontSize="9" IsChecked="True" Margin="12,0,0,0"
+                          Checked="OnMediaParamChanged" Unchecked="OnMediaParamChanged"/></StackPanel>
+              <CheckBox x:Name="MediaUnlinkCheck" Content="🔓 Déconnecter du sibling" FontSize="9" Margin="0,2,0,4"
+                        Visibility="Collapsed" ToolTip="Si coché, le média de cette séquence ne sera PAS propagé à sa paire FR/EN"
+                        Checked="OnMediaUnlinkChanged" Unchecked="OnMediaUnlinkChanged"/>
+
+              <Border x:Name="ScrubberPanel" Visibility="Collapsed" Background="#08FFFFFF" CornerRadius="4" Padding="8,6" Margin="0,2,0,4">
+                <StackPanel>
+                  <DockPanel Margin="0,0,0,5">
+                    <TextBlock Text="✂ TRIM &amp; SCRUBBER" FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource Fg2}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ScrubberDurationLabel" DockPanel.Dock="Right" Text="0:00" FontSize="9" Foreground="{StaticResource Fg2}" FontFamily="Consolas" VerticalAlignment="Center"/>
+                  </DockPanel>
+                  <Border x:Name="TrimGuidePanel" Background="#0D1A2A" BorderBrush="#1E3A5A" BorderThickness="1" CornerRadius="4" Padding="6,5" Margin="0,0,0,6">
+                    <DockPanel>
+                      <Button DockPanel.Dock="Right" Content="✕" Style="{StaticResource IconButton}" Padding="4,1" FontSize="9" Margin="4,0,0,0"
+                              Click="OnDismissTrimGuide" ToolTip="Fermer le guide"/>
+                      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Background="#1A2A3A" CornerRadius="3" Padding="5,2"><TextBlock Text="1  Glisser" FontSize="9" Foreground="#6AB0DD"/></Border>
+                        <TextBlock Text="→" FontSize="9" Foreground="#445566" VerticalAlignment="Center" Margin="4,0"/>
+                        <Border Background="#1A2A3A" CornerRadius="3" Padding="5,2"><TextBlock Text="2  In ▼" FontSize="9" Foreground="#4DC93C"/></Border>
+                        <TextBlock Text="→" FontSize="9" Foreground="#445566" VerticalAlignment="Center" Margin="4,0"/>
+                        <Border Background="#1A2A3A" CornerRadius="3" Padding="5,2"><TextBlock Text="3  Out ▼" FontSize="9" Foreground="#E84118"/></Border>
+                      </StackPanel>
+                    </DockPanel>
+                  </Border>
+                  <TextBlock x:Name="ScrubberCurrentTimeLabel" Text="0.0s"
+                             FontFamily="Consolas" FontSize="11" FontWeight="SemiBold" Foreground="White"
+                             HorizontalAlignment="Center" TextWrapping="Wrap"
+                             TextAlignment="Center" Margin="0,0,0,4"/>
+                  <Slider x:Name="ScrubberSlider" Minimum="0" Maximum="1" Value="0" IsSnapToTickEnabled="False" TickFrequency="0.1"
+                          ValueChanged="OnScrubberValueChanged" Margin="0,0,0,4" ToolTip="Déplacer pour prévisualiser une frame"/>
+                  <Grid x:Name="TrimBarContainer" Height="18" Margin="0,0,0,6" SizeChanged="OnTrimBarContainerSizeChanged">
+                    <Border Background="#222" CornerRadius="4"/>
+                    <Thumb x:Name="TrimRangeBar" Width="0" Height="18" Cursor="SizeAll" DragStarted="OnTrimDragStarted" DragDelta="OnTrimRangeDragDelta" ToolTip="Glisser la plage"><Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="#44E84118" CornerRadius="2"/></ControlTemplate></Thumb.Template></Thumb>
+                    <Canvas x:Name="TrimBarCanvas">
+                      <Border x:Name="ScrubberPositionLine" Width="2" Height="18" Background="#80FFFFFF" Canvas.Left="0" IsHitTestVisible="False"/>
+                      <Thumb x:Name="TrimInHandle" Width="8" Height="18" Canvas.Left="0"
+                             DragStarted="OnTrimDragStarted" DragDelta="OnTrimInDragDelta" Cursor="SizeWE" ToolTip="Glisser : point In">
+                        <Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="#FF4DC93C" CornerRadius="2"/></ControlTemplate></Thumb.Template>
+                      </Thumb>
+                      <Thumb x:Name="TrimOutHandle" Width="8" Height="18" Canvas.Left="0"
+                             DragStarted="OnTrimDragStarted" DragDelta="OnTrimOutDragDelta" Cursor="SizeWE" ToolTip="Glisser : point Out">
+                        <Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="#FFE84118" CornerRadius="2"/></ControlTemplate></Thumb.Template>
+                      </Thumb>
+                    </Canvas>
+                  </Grid>
+
+                  <Border Background="#0D0D0F" CornerRadius="4" ClipToBounds="True" Margin="0,0,0,6" MouseLeftButtonDown="OnScrubberThumbClick">
+                    <Grid>
+                      <Image x:Name="ScrubberThumb" Height="180" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+                      <TextBlock Text="🔍 Double-clic = popup HD" FontSize="9" Foreground="#55FFFFFF"
+                                 HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,6,4" IsHitTestVisible="False"/>
+                    </Grid>
+                  </Border>
+                  <Grid Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                    <Button x:Name="BtnSetIn" Grid.Column="0" Content="◀ In ici" Style="{StaticResource DarkButton}" Padding="6,5" FontSize="10"
+                            HorizontalAlignment="Stretch" Click="OnSetTrimInHere" ToolTip="Placer le In au timestamp courant">
+                      <Button.Foreground><SolidColorBrush Color="#4DC93C"/></Button.Foreground></Button>
+                    <Button Content="✕" Grid.Column="1" Style="{StaticResource IconButton}" Padding="8,5" FontSize="10" Margin="4,0"
+                            Click="OnResetTrim" ToolTip="Supprimer les points de trim"/>
+                    <Button x:Name="BtnSetOut" Grid.Column="2" Content="Out ici ▶" Style="{StaticResource DarkButton}" Padding="6,5" FontSize="10"
+                            HorizontalAlignment="Stretch" Click="OnSetTrimOutHere" ToolTip="Placer le Out au timestamp courant">
+                      <Button.Foreground><SolidColorBrush Color="#E84118"/></Button.Foreground></Button>
+                  </Grid>
+                  <Grid Margin="0,0,0,2"><Grid.ColumnDefinitions>
+                    <ColumnDefinition/><ColumnDefinition Width="6"/><ColumnDefinition/><ColumnDefinition Width="6"/><ColumnDefinition/>
+                  </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                      <TextBlock FontSize="9" Margin="0,0,0,2"><Run Foreground="#4DC93C" FontWeight="SemiBold" Text="▶ In"/><Run Foreground="{StaticResource Fg2}" Text=" (sec)"/></TextBlock>
+                      <TextBox x:Name="TrimInBox" Text="" FontSize="10" FontFamily="Consolas" ToolTip="↑↓=±0.1s" LostFocus="OnTrimChanged" PreviewKeyDown="OnTrimFieldKeyDown"/></StackPanel>
+                    <StackPanel Grid.Column="2">
+                      <TextBlock FontSize="9" Margin="0,0,0,2"><Run Foreground="#E84118" FontWeight="SemiBold" Text="◀ Out"/><Run Foreground="{StaticResource Fg2}" Text=" (sec)"/></TextBlock>
+                      <TextBox x:Name="TrimOutBox" Text="" FontSize="10" FontFamily="Consolas" ToolTip="↑↓=±0.1s" LostFocus="OnTrimChanged" PreviewKeyDown="OnTrimFieldKeyDown"/></StackPanel>
+                    <StackPanel Grid.Column="4">
+                      <TextBlock Text="Durée trim" FontSize="9" Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+                      <TextBlock x:Name="TrimDurationLabel" Text="—" FontSize="11" FontWeight="SemiBold" FontFamily="Consolas"
+                                 Foreground="#FFA040" VerticalAlignment="Center" Padding="0,5"/></StackPanel>
+                  </Grid>
+                </StackPanel>
+              </Border>
+
+              <Border x:Name="CropPanel" Background="#08FFFFFF" CornerRadius="4" Padding="8,6" Margin="0,2,0,4">
+                <StackPanel>
+                  <Button Content="🎨 Annoter le slide" Style="{StaticResource IconButton}"
+                          Padding="6,2" FontSize="9" Margin="0,2,0,2"
+                          Click="OnOpenImageEditor" ToolTip="Ouvrir l'éditeur d'image sur le slide"/>
+                  <DockPanel Margin="0,0,0,4">
+                    <TextBlock Text="✂ RECADRAGE (px)" FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource Fg2}" VerticalAlignment="Center"/>
+                    <Button DockPanel.Dock="Right" Content="✕ Reset" Style="{StaticResource IconButton}" Padding="6,2" FontSize="9" Click="OnResetCrop" ToolTip="Remettre tous les crops à 0"/>
+                    <Button DockPanel.Dock="Right" Content="🖱 Interactif" Style="{StaticResource IconButton}" Padding="6,2" FontSize="9" Margin="0,0,4,0"
+                            Click="OnOpenCropEditor" ToolTip="Ouvrir l'éditeur de recadrage interactif"/></DockPanel>
+                  <Grid Margin="0,0,0,3"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="6"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions><RowDefinition/><RowDefinition Height="4"/><RowDefinition/></Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Grid.Column="0"><TextBlock Text="Haut (T)" FontSize="9" Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+                      <TextBox x:Name="CropTopBox" Text="0" FontSize="10" FontFamily="Consolas" LostFocus="OnCropChanged" PreviewKeyDown="OnCropFieldKeyDown"/></StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="2"><TextBlock Text="Bas (B)" FontSize="9" Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+                      <TextBox x:Name="CropBottomBox" Text="0" FontSize="10" FontFamily="Consolas" LostFocus="OnCropChanged" PreviewKeyDown="OnCropFieldKeyDown"/></StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="0"><TextBlock Text="Gauche (L)" FontSize="9" Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+                      <TextBox x:Name="CropLeftBox" Text="0" FontSize="10" FontFamily="Consolas" LostFocus="OnCropChanged" PreviewKeyDown="OnCropFieldKeyDown"/></StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="2"><TextBlock Text="Droite (R)" FontSize="9" Foreground="{StaticResource Fg2}" Margin="0,0,0,2"/>
+                      <TextBox x:Name="CropRightBox" Text="0" FontSize="10" FontFamily="Consolas" LostFocus="OnCropChanged" PreviewKeyDown="OnCropFieldKeyDown"/></StackPanel>
+                  </Grid>
+
+                  <DockPanel Margin="0,6,0,0">
+                    <TextBlock Text="Ancrage" FontSize="9" Foreground="{StaticResource Fg2}"
+                               VerticalAlignment="Center" Margin="0,0,8,0" DockPanel.Dock="Left"/>
+                    <UniformGrid x:Name="GravityGrid" Rows="3" Columns="3" Width="72" HorizontalAlignment="Left">
+                      <Button x:Name="GravTL" Tag="topleft"     Content="↖" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnGravityClick" ToolTip="Haut-Gauche"/>
+                      <Button x:Name="GravT"  Tag="top"         Content="↑" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnGravityClick" ToolTip="Haut"/>
+                      <Button x:Name="GravTR" Tag="topright"    Content="↗" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnGravityClick" ToolTip="Haut-Droite"/>
+                      <Button x:Name="GravL"  Tag="left"        Content="←" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnGravityClick" ToolTip="Gauche"/>
+                      <Button x:Name="GravC"  Tag="center"      Content="●" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnGravityClick" ToolTip="Centre (défaut)" Background="#33FF8000"/>
+                      <Button x:Name="GravR"  Tag="right"       Content="→" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnGravityClick" ToolTip="Droite"/>
+                      <Button x:Name="GravBL" Tag="bottomleft"  Content="↙" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnGravityClick" ToolTip="Bas-Gauche"/>
+                      <Button x:Name="GravB"  Tag="bottom"      Content="↓" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnGravityClick" ToolTip="Bas"/>
+                      <Button x:Name="GravBR" Tag="bottomright" Content="↘" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnGravityClick" ToolTip="Bas-Droite"/>
+                    </UniformGrid>
+                  </DockPanel>
+
+                  <DockPanel Margin="0,6,0,0">
+                    <TextBlock Text="Position" FontSize="9" Foreground="{StaticResource Fg2}"
+                               VerticalAlignment="Center" Margin="0,0,8,0" DockPanel.Dock="Left"
+                               ToolTip="Où le média apparaît PAR-DESSUS la base (diapo ou clip composé/cam)"/>
+                    <UniformGrid x:Name="AnchorGrid" Rows="3" Columns="3" Width="72" HorizontalAlignment="Left">
+                      <Button x:Name="AnchTL" Tag="topleft"     Content="↖" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnAnchorClick" ToolTip="Haut-Gauche"/>
+                      <Button x:Name="AnchT"  Tag="top"         Content="↑" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnAnchorClick" ToolTip="Haut"/>
+                      <Button x:Name="AnchTR" Tag="topright"    Content="↗" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnAnchorClick" ToolTip="Haut-Droite"/>
+                      <Button x:Name="AnchL"  Tag="left"        Content="←" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnAnchorClick" ToolTip="Gauche"/>
+                      <Button x:Name="AnchC"  Tag="center"      Content="●" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnAnchorClick" ToolTip="Centre (défaut)" Background="#33FF8000"/>
+                      <Button x:Name="AnchR"  Tag="right"       Content="→" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnAnchorClick" ToolTip="Droite"/>
+                      <Button x:Name="AnchBL" Tag="bottomleft"  Content="↙" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnAnchorClick" ToolTip="Bas-Gauche"/>
+                      <Button x:Name="AnchB"  Tag="bottom"      Content="↓" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnAnchorClick" ToolTip="Bas"/>
+                      <Button x:Name="AnchBR" Tag="bottomright" Content="↘" Style="{StaticResource IconButton}" Width="22" Height="22" Padding="0" FontSize="13" Click="OnAnchorClick" ToolTip="Bas-Droite"/>
+                    </UniformGrid>
+                  </DockPanel>
+                </StackPanel></Border>
+
+              <Border Background="#08FFFFFF" CornerRadius="4" Padding="8,5" Margin="0,4,0,0">
+                <StackPanel>
+                  <TextBlock Text="OPTIONS PREVIEW" FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource Fg2}" Margin="0,0,0,4"/>
+                  <CheckBox x:Name="PvIncludeAvatar" Content="Avatar + glow" FontSize="9" IsChecked="False" Margin="0,0,0,2"
+                            ToolTip="Inclure avatar circulaire, ring et halo (plus lent)"/>
+                  <CheckBox x:Name="PvIncludeShadow" Content="Ombre media" FontSize="9" IsChecked="False" Margin="0,0,0,2"
+                            ToolTip="Inclure ombre sur le media overlay (plus lent)"/>
+                  <CheckBox x:Name="PvIncludeSubs" Content="Sous-titres" FontSize="9" IsChecked="False" Margin="0,0,0,2"
+                            ToolTip="Graver les sous-titres dans la preview"/>
+                  <CheckBox x:Name="PvFullFps" Content="25 fps (au lieu de 15)" FontSize="9" IsChecked="False" Margin="0,0,0,0"
+                            ToolTip="Framerate complet (plus lent mais plus fluide)"/>
+                </StackPanel>
+              </Border>
+              <Button x:Name="BtnPreviewFrame" Content="👁 Aperçu composé" Style="{StaticResource DarkButton}" Padding="8,5"
+                      HorizontalAlignment="Stretch" Margin="0,2,0,0" Click="OnPreviewFrame"
+                      ToolTip="PNG compose pour chaque segment selectionne (un par Note unique)"/>
+              <Button x:Name="BtnPreviewSegment" Content="▶ Prévisualiser ce segment" Style="{StaticResource AccentButton}" Padding="8,5"
+                      HorizontalAlignment="Stretch" Margin="0,4,0,0" Click="OnPreviewSegment"
+                      ToolTip="Genere et ouvre un MP4 de prévisualisation du segment selectionne"/>
+            </StackPanel>
+          </ScrollViewer>
+        </Border>
+
+        <TabControl Background="Transparent" BorderThickness="0" Padding="0" Margin="0">
+          <TabControl.Resources>
+            <Style TargetType="TabItem">
+              <Setter Property="Foreground" Value="{StaticResource Fg2}"/><Setter Property="Background" Value="Transparent"/>
+              <Setter Property="Padding" Value="12,6"/><Setter Property="FontSize" Value="11"/><Setter Property="FontWeight" Value="SemiBold"/>
+              <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TabItem">
+                <Border x:Name="Bd" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" BorderThickness="0,0,0,2" BorderBrush="Transparent">
+                  <ContentPresenter ContentSource="Header" HorizontalAlignment="Center"/></Border>
+                <ControlTemplate.Triggers>
+                  <Trigger Property="IsSelected" Value="True"><Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}"/><Setter Property="Foreground" Value="{StaticResource Fg}"/></Trigger>
+                  <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="#0AFFFFFF"/></Trigger>
+                </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+          </TabControl.Resources>
+          <TabItem Header="⚙ Configuration">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+              <StackPanel Margin="10,10,10,10">
+                <local:BubbleConfigControl x:Name="BubbleConfig" Margin="0,0,0,8"/>
+                <Border Height="1" Background="{StaticResource Line}" Margin="0,0,0,8"/>
+                <Border Background="#0DFFFFFF" CornerRadius="4" Padding="8,6" Margin="0,0,0,8"><StackPanel>
+                  <TextBlock Text="VOIX TTS" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource Fg2}" Margin="0,0,0,6"/>
+                  <RadioButton x:Name="TtsModeSapi" GroupName="TtsMode" IsChecked="False" Margin="0,0,0,5" Foreground="{StaticResource Fg}">
+                    <StackPanel><TextBlock Text="🔧 Mode test — SAPI" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource Fg}"/>
+                      <TextBlock Text="Voix basique, 0 crédit" FontSize="10" Foreground="{StaticResource Fg2}"/></StackPanel></RadioButton>
+                  <RadioButton x:Name="TtsModeAzure" GroupName="TtsMode" IsChecked="True" Foreground="{StaticResource Fg}">
+                    <StackPanel><TextBlock Text="🎙 Production — Azure Neural" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource LangEN}"/>
+                      <TextBlock Text="HenriNeural / GuyNeural" FontSize="10" Foreground="{StaticResource Fg2}"/></StackPanel></RadioButton></StackPanel></Border>
+                <Border Background="#0DFFFFFF" CornerRadius="4" Padding="8,6" Margin="0,0,0,8"><StackPanel>
+                  <CheckBox x:Name="ShowAvatarsCheck" Content="Afficher les avatars" IsChecked="True" Margin="0,0,0,6"/>
+                  <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="Intensité halo :" Foreground="{StaticResource Fg2}" FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox x:Name="GlowIntensityBox" Text="0.7" Width="48" FontSize="11"/></StackPanel>
+                  <CheckBox x:Name="BurnSubsCheck" Content="Graver les sous-titres" IsChecked="True" Margin="0,0,0,8"/>
+                  <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="Taille sous-titres :" Foreground="{StaticResource Fg2}" FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox x:Name="SubFontSizeBox" Text="50" Width="50" FontSize="11"/>
+                    <TextBlock Text="px" Foreground="{StaticResource Fg2}" FontSize="11" VerticalAlignment="Center" Margin="4,0,0,0"/></StackPanel>
+                  <TextBlock Text="COULEURS SOUS-TITRES" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource Fg2}" Margin="0,0,0,6"/>
+                  <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="6"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="4"/><RowDefinition Height="Auto"/><RowDefinition Height="4"/><RowDefinition Height="Auto"/><RowDefinition Height="4"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Texte" FontSize="9" Foreground="{StaticResource Fg2}" HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Contour" FontSize="9" Foreground="{StaticResource Fg2}" HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                    <Button x:Name="SubB1PrimaryBtn" Grid.Row="2" Grid.Column="0" Height="22" Background="#FFFF00FF" BorderBrush="White" BorderThickness="1" Cursor="Hand" Click="OnPickSubB1Primary"><TextBlock Text="B1" FontSize="9" FontWeight="Bold" Foreground="White"/></Button>
+                    <Button x:Name="SubB1OutlineBtn" Grid.Row="2" Grid.Column="2" Height="22" Background="#FFFFFFFF" BorderBrush="{StaticResource Line}" BorderThickness="1" Cursor="Hand" Click="OnPickSubB1Outline"><TextBlock Text="B1" FontSize="9" FontWeight="Bold" Foreground="Black"/></Button>
+                    <Button x:Name="SubB2PrimaryBtn" Grid.Row="4" Grid.Column="0" Height="22" Background="#FF00FFFF" BorderBrush="White" BorderThickness="1" Cursor="Hand" Click="OnPickSubB2Primary"><TextBlock Text="B2" FontSize="9" FontWeight="Bold" Foreground="Black"/></Button>
+                    <Button x:Name="SubB2OutlineBtn" Grid.Row="4" Grid.Column="2" Height="22" Background="#FFFFFFFF" BorderBrush="{StaticResource Line}" BorderThickness="1" Cursor="Hand" Click="OnPickSubB2Outline"><TextBlock Text="B2" FontSize="9" FontWeight="Bold" Foreground="Black"/></Button>
+                    <Button x:Name="SubYouPrimaryBtn" Grid.Row="6" Grid.Column="0" Height="22" Background="#FFFFD400" BorderBrush="White" BorderThickness="1" Cursor="Hand" Click="OnPickSubYouPrimary"><TextBlock Text="YOU" FontSize="9" FontWeight="Bold" Foreground="Black"/></Button>
+                    <Button x:Name="SubYouOutlineBtn" Grid.Row="6" Grid.Column="2" Height="22" Background="#FFFFFFFF" BorderBrush="{StaticResource Line}" BorderThickness="1" Cursor="Hand" Click="OnPickSubYouOutline"><TextBlock Text="YOU" FontSize="9" FontWeight="Bold" Foreground="Black"/></Button></Grid>
+                </StackPanel></Border>
+              </StackPanel>
+            </ScrollViewer>
+          </TabItem>
+          <TabItem Header="🎬 Export">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+              <StackPanel Margin="10,10,10,10">
+                <TextBlock Text="Dossier sortie MP4 :" Foreground="{StaticResource Fg2}" FontSize="11" Margin="0,0,0,4"/>
+                <DockPanel Margin="0,0,0,8"><Button DockPanel.Dock="Right" Content="…" Style="{StaticResource IconButton}" Margin="6,0,0,0" Click="OnBrowseOutputDir"/>
+                  <TextBox x:Name="OutputDirBox" FontFamily="Consolas" FontSize="11"/></DockPanel>
+                <TextBlock Text="Chemin ffmpeg.exe (vide = PATH) :" Foreground="{StaticResource Fg2}" FontSize="11" Margin="0,0,0,4"/>
+                <DockPanel Margin="0,0,0,8"><Button DockPanel.Dock="Right" Content="…" Style="{StaticResource IconButton}" Margin="6,0,0,0" Click="OnBrowseFfmpeg"/>
+                  <TextBox x:Name="FfmpegPathBox" FontFamily="Consolas" FontSize="11"/></DockPanel>
+                <TextBlock Text="Format vidéo :" Foreground="{StaticResource Fg2}" FontSize="11" Margin="0,0,0,4"/>
+                <ComboBox x:Name="VideoAspectBox" Margin="0,0,0,8" FontSize="11"
+                          SelectionChanged="OnVideoAspectChanged"
+                          ToolTip="Paysage = YouTube classique. Vertical = Reels/TikTok/Shorts (les positions avatars et la taille des sous-titres sont automatiquement adaptées).">
+                  <ComboBoxItem Tag="Landscape" IsSelected="True">Paysage 1920×1080 (YouTube)</ComboBoxItem>
+                  <ComboBoxItem Tag="Portrait">Vertical 1080×1920 (Reels / TikTok / Shorts)</ComboBoxItem>
+                </ComboBox>
+                <Grid Margin="0,0,0,8"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="10"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                  <StackPanel Grid.Column="0"><TextBlock Text="CRF (qualité)" Foreground="{StaticResource Fg2}" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox x:Name="CrfBox" Text="18" FontSize="12"/></StackPanel>
+                  <StackPanel Grid.Column="2"><TextBlock Text="Taille police" Foreground="{StaticResource Fg2}" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox x:Name="FontSizeBox" Text="34" FontSize="12"/></StackPanel></Grid>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                  <TextBlock Text="Segments en parallèle :" Foreground="{StaticResource Fg2}" FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                  <TextBox x:Name="ParallelBox" Text="0" Width="36" FontSize="11" ToolTip="0 = auto"/>
+                  <TextBlock Text="(0 = auto)" Foreground="{StaticResource Fg2}" FontSize="10" VerticalAlignment="Center" Margin="6,0,0,0"/></StackPanel>
+                <CheckBox x:Name="UseNvencCheck" Content="Encoder avec NVIDIA NVENC (GPU)" IsChecked="True" Margin="0,0,0,12" FontSize="11"/>
+
+                <Border Background="#08FFFFFF" CornerRadius="4" Padding="8,6" Margin="0,0,0,10">
+                  <StackPanel>
+                    <TextBlock Text="📁 Organisation des fichiers" FontSize="10" FontWeight="SemiBold"
+                               Foreground="{StaticResource Fg2}" Margin="0,0,0,6"/>
+                    <TextBlock TextWrapping="Wrap" FontSize="10" Foreground="{StaticResource Fg2}" Margin="0,0,0,6"
+                               Text="Copie tous les médias et audios du projet vers leurs dossiers dédiés (slides/{projet}/media/ et audio/) avec un nom cohérent. Rétroactif pour les fichiers déjà assignés."/>
+                    <Button Content="📂 Réorganiser tous les médias" Style="{StaticResource DarkButton}"
+                            HorizontalAlignment="Stretch" Padding="8,6" FontSize="11"
+                            Click="OnReorganizeAllAssets"
+                            ToolTip="Copie + renomme tous les médias/audios existants dans le dossier projet"/>
+                  </StackPanel>
+                </Border>
+
+                <Button x:Name="BtnExportAll" Content="⬛⬛ Exporter toutes les scènes"
+                        Style="{StaticResource DarkButton}"
+                        HorizontalAlignment="Stretch" Padding="8,6"
+                        Margin="0,0,0,6"
+                        Click="OnExportAllScenes"
+                        ToolTip="Exporte chaque scène du projet en MP4 séquentiellement (file d'attente)"/>
+
+                <Button x:Name="BtnExportBottom" Content="⬛ EXPORTER MP4" Style="{StaticResource AccentButton}"
+                        HorizontalAlignment="Stretch" Padding="12,10" Click="OnExportMp4"/>
+              </StackPanel>
+            </ScrollViewer>
+          </TabItem>
+
+          <TabItem Header="📜 Historique">
+            <Grid Margin="10,8,10,8">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+
+              <DockPanel Grid.Row="0" Margin="0,0,0,4">
+                <TextBlock Text="↩ ANNULER" FontSize="10" FontWeight="SemiBold"
+                           Foreground="{StaticResource LangEN}" VerticalAlignment="Center"/>
+                <TextBlock x:Name="UndoCountLabel" DockPanel.Dock="Right"
+                           FontSize="10" Foreground="{StaticResource Fg2}"
+                           FontFamily="Consolas" VerticalAlignment="Center" Text="0"/>
+              </DockPanel>
+
+              <ListBox x:Name="UndoHistoryList" Grid.Row="1"
+                       Background="#08FFFFFF" BorderBrush="{StaticResource Line}" BorderThickness="1"
+                       Foreground="{StaticResource Fg}" FontSize="11"
+                       ScrollViewer.VerticalScrollBarVisibility="Auto"
+                       SelectionChanged="OnUndoHistorySelected">
+                <ListBox.ItemContainerStyle>
+                  <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="8,5"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Style.Triggers>
+                      <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#14FFFFFF"/>
+                      </Trigger>
+                      <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="#334DC93C"/>
+                      </Trigger>
+                    </Style.Triggers>
+                  </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock Text="{Binding Index}" Width="26" Foreground="{StaticResource Fg2}"
+                                 FontFamily="Consolas" FontSize="10" VerticalAlignment="Center"/>
+                      <TextBlock Text="↩ " Foreground="{StaticResource LangEN}" VerticalAlignment="Center"/>
+                      <TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+
+              <Border Grid.Row="2" Height="1" Background="{StaticResource Line}" VerticalAlignment="Center"/>
+
+              <DockPanel Grid.Row="3" Margin="0,4,0,4">
+                <TextBlock Text="↪ RÉTABLIR" FontSize="10" FontWeight="SemiBold"
+                           Foreground="{StaticResource Accent}" VerticalAlignment="Center"/>
+                <TextBlock x:Name="RedoCountLabel" DockPanel.Dock="Right"
+                           FontSize="10" Foreground="{StaticResource Fg2}"
+                           FontFamily="Consolas" VerticalAlignment="Center" Text="0"/>
+              </DockPanel>
+
+              <ListBox x:Name="RedoHistoryList" Grid.Row="4"
+                       Background="#08FFFFFF" BorderBrush="{StaticResource Line}" BorderThickness="1"
+                       Foreground="{StaticResource Fg}" FontSize="11"
+                       ScrollViewer.VerticalScrollBarVisibility="Auto"
+                       SelectionChanged="OnRedoHistorySelected">
+                <ListBox.ItemContainerStyle>
+                  <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="8,5"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Style.Triggers>
+                      <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#14FFFFFF"/>
+                      </Trigger>
+                      <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="#33E84118"/>
+                      </Trigger>
+                    </Style.Triggers>
+                  </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock Text="{Binding Index}" Width="26" Foreground="{StaticResource Fg2}"
+                                 FontFamily="Consolas" FontSize="10" VerticalAlignment="Center"/>
+                      <TextBlock Text="↪ " Foreground="{StaticResource Accent}" VerticalAlignment="Center"/>
+                      <TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </Grid>
+          </TabItem>
+
+        </TabControl>
+      </DockPanel>
+    </Grid>
+  </Grid>
+</Window>
